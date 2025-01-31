@@ -1,0 +1,9 @@
+UNa = hosenrobiul
+UPass = 12345@#
+
+Store ID =  devel679c32d3d4684
+
+Store Password = devel679c32d3d4684@ssl
+
+
+https://github.com/ratin17/SSLCommerz-in-Django

@@ -31,7 +31,7 @@ DEBUG = True
 
 CORS_ALLOW_ALL_ORIGINS = True
 ALLOWED_HOSTS = ['*']
-
+CSRF_TRUSTED_ORIGINS = ['https://sporting-server-o0yi.onrender.com','https://*.127.0.0.1']
 
 # Application definition
 

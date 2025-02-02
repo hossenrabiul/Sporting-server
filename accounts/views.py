@@ -16,11 +16,6 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.shortcuts import redirect
 
-
-# class PatientViewset(viewsets.ModelViewSet):
-#     queryset = models.Patient.objects.all()
-#     serializer_class = serializers.PatientSerializer
-
 class UserRegistrationApiView(APIView):
     serializer_class = serializers.RegistrationSerializer
     
@@ -60,7 +55,7 @@ def activate(request, uid64, token):
         return redirect('register')
     
 
-class UserLoginApiView(APIView):
+# class UserLoginApiView(APIView):
     def post(self, request):
         serializer = serializers.UserLoginSerializer(data = self.request.data)
         if serializer.is_valid():
@@ -78,6 +73,29 @@ class UserLoginApiView(APIView):
             else:
                 return Response({'error' : "Invalid Credential"})
         return Response(serializer.errors)
+
+class UserLoginApiView(APIView):
+    def post(self, request):
+        serializer = serializers.UserLoginSerializer(data=request.data)
+        if serializer.is_valid():
+            username = serializer.validated_data['username']
+            password = serializer.validated_data['password']
+
+            user = authenticate(username=username, password=password)
+
+            if user:
+                token, _ = Token.objects.get_or_create(user=user)
+                login(request, user)
+                
+                return Response({
+                    'token': token.key,
+                    'user_id': user.id,
+                    'is_superuser': user.is_superuser  # ✅ Include admin status
+                })
+            else:
+                return Response({'error': "Invalid Credential"}, status=400)
+
+        return Response(serializer.errors, status=400)
 
 
 class UserLogoutView(APIView):

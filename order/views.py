@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,get_object_or_404
 from rest_framework.views import APIView
 from posts.models import Products
 from . models import Order, Cart
@@ -9,18 +9,34 @@ from .serializers import CartSerializers, OrderSerializers
 
 class AddToCardView(APIView):
     def post(self, request, product_id):
-        product = Products.objects.get(id = product_id)
-        cart_item, created = Cart.objects.get_or_create(user = request.user, product = product)
-        if not created:
-            cart_item.quantity += 1
-            cart_item.product = product
-            cart_item.user = request.user
-            cart_item.save()
-        return Response({"message": "Product added to cart"}, status=status.HTTP_200_OK)
-    
+
+        item = get_object_or_404(Products, pk=product_id)
+        order_item = Cart.objects.get_or_create(item=item, user=request.user, purchased=False)
+        order_qs = Order.objects.filter(user=request.user, ordered=False)
+        if order_qs.exists():
+            order = order_qs[0]
+            if order.orderItem.filter(item=item).exists():
+                order_item[0].quantity += 1
+                order_item[0].save()
+                # messages.info(request, "This item quantity was updated!")
+                return Response({"message": "This item quantity was updated!"}, status=status.HTTP_200_OK)
+                return redirect('shop:home')
+            else:
+                order.orderItem.add(order_item[0])
+                # messages.info(request, "This item was added to your cart!")
+                return Response({"message": "This item was added to your cart!"}, status=status.HTTP_200_OK)
+                return redirect('shop:home')
+        else:
+            order = Order(user=request.user)
+            order.save()
+            order.orderItem.add(order_item[0])
+            # messages.info(request, "This item was added to your cart!")
+            return Response({"message": "This item was added to your cart!"}, status=status.HTTP_200_OK)
+            return redirect('shop:home')
 
 class CartView(APIView):
     def get(self, request):
+
         cart_items = Cart.objects.filter(user = request.user)
         serializer = CartSerializers(cart_items, many = True)
         return Response(serializer.data, status=status.HTTP_200_OK)

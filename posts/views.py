@@ -15,7 +15,7 @@ class PostList(APIView):
     # queryset = Post.objects.all()
     # serializer_class = PostSerializer
 
-    # permission_classes = [IsAuthorOrReadOnly]
+    permission_classes = [IsAuthorOrReadOnly]
     
     def get(self, request, format=None):
         print('PostList  --->> inside get ')

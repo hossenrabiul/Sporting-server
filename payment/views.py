@@ -16,6 +16,7 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 
 from order.serializers import OrderSerializers
 
@@ -43,44 +44,7 @@ class CheckoutView(APIView):
         })
 
 
-# def paymentView(request):
-
-#     # order_qs = Order.objects.filter(user =request.user, ordered = False)
-#     # order_items = order_qs.orderItem.all()
-
-#     # order_total = order_qs.get_total()
-
-   
-#     settings = { 'store_id': 'devel679c32d3d4684', 'store_pass': 'devel679c32d3d4684@ssl', 'issandbox': True }
-#     sslcz = SSLCOMMERZ(settings)
-#     post_body = {}
-#     post_body['total_amount'] = 100.0
-#     post_body['currency'] = "BDT"
-#     post_body['tran_id'] = "12345"
-#     post_body['success_url'] = "http://127.0.0.1:8000/payment/successView/"
-#     post_body['fail_url'] = "http://127.0.0.1:8000/payment/cancelView/"
-#     post_body['cancel_url'] = "http://127.0.0.1:8000/payment/cancelView/"
-#     post_body['emi_option'] = 0
-#     post_body['cus_name'] = "test"
-#     post_body['cus_email'] = "request.user.email"
-#     post_body['cus_phone'] = "01700000000"
-#     post_body['cus_add1'] = "customer address"
-#     post_body['cus_city'] = "Dhaka"
-#     post_body['cus_country'] = "Bangladesh"
-#     post_body['shipping_method'] = "NO"
-#     post_body['multi_card_name'] = ""
-#     post_body['num_of_item'] = 1
-#     post_body['product_name'] = "Test"
-#     post_body['product_category'] = "Test Category"
-#     post_body['product_profile'] = "general"
-
-
-#     response = sslcz.createSession(post_body) # API response
-#     print(response)
-#     # Need to redirect user to response['GatewayPageURL']
-
-
-class paymentView(APIView):
+class paymenView(APIView):
     def post(self, request):
         # Extract data from the request (if needed)
         user_email = request.user.email if request.user.is_authenticated else "guest@example.com"
@@ -140,36 +104,63 @@ class paymentView(APIView):
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-def successView(request):
-    # Extract transaction details from the query parameters
-    train_id = request.GET.get('train_id')
-    status = request.GET.get('status')
-    # user = User.objects.get(id = id)
-    # order = Order.objects.get(user = user)
-    # order.ordered = True
-    # order.save()
+class PaymentAPI(APIView):
+    permission_classes = [AllowAny]
 
-    return HttpResponse(
-        json.dumps({
-            'status': 'success',
-            'message': 'Payment completed successfully',
-            'train_id' : train_id,
-            'payment_status': status
-        }),
-        content_type='application/json'
-    )
+    def post(self, request):
+        try:
+            tran_id = str(uuid.uuid4())[:10] 
 
-def cancelView(request):
-    # Extract transaction details from the query parameters
-    tran_id = request.GET.get('tran_id')
-    status = request.GET.get('status')
+            settings = {
+            'store_id': 'devel679c32d3d4684',
+            'store_pass': 'devel679c32d3d4684@ssl',
+            'issandbox': True
+            }
 
-    return HttpResponse(
-        json.dumps({
-            'status': 'cancelled',
-            'message': 'Payment was cancelled',
-            'tran_id': tran_id,
-            'payment_status': status
-        }),
-        content_type='application/json'
-    )
+            sslcz = SSLCOMMERZ(settings)
+
+            post_body = {
+                'total_amount': 5000,
+                'currency': "BDT",
+                'tran_id': tran_id,
+                'success_url': "http://127.0.0.1:8000/payment/success/",
+                'fail_url': "http://127.0.0.1:8000/payment/fail/",
+                'cancel_url': "http://127.0.0.1:8000/payment/cancel/",
+                'emi_option': 0,
+                'cus_name':User.username,
+                'cus_email':User.email,
+                'cus_phone': "01765034196",
+                'cus_add1': "Dhaka",
+                'cus_city': "Dhaka",
+                'cus_country': "Bangladesh", 
+                'shipping_method': "NO",
+                'multi_card_name': "10304040",
+                'num_of_item': 1,
+                'product_name': "Test",
+                'product_category': "Test Category",
+                'product_profile': "general",
+            }
+
+            response = sslcz.createSession(post_body)
+
+            if 'GatewayPageURL' not in response:
+                return Response({"error": "Payment session creation failed", "details": response}, status=400)
+
+            return Response({'payment_url': response['GatewayPageURL']})
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+
+class PaymentSuccessAPI(APIView):
+    def post(self, request):
+        return Response({"message": "Payment successful", "data": request.data})
+
+class PaymentFailedAPI(APIView):
+    def post(self, request):
+        return Response({"message": "Payment failed", "data": request.data})
+
+
+class PaymentCancelAPI(APIView):
+    def post(self, request):
+        return Response({"message": "Payment cancelled", "data": request.data})

@@ -15,10 +15,13 @@ class PostList(APIView):
     # queryset = Post.objects.all()
     # serializer_class = PostSerializer
 
-    permission_classes = [IsAuthorOrReadOnly]
+    # permission_classes = [IsAuthorOrReadOnly]
     
     def get(self, request, format=None):
         print('PostList  --->> inside get ')
+        # if request.user.is_anonymous:
+        #     return Response({'error': 'Authentication required'}, status=401)
+        
         posts = Products.objects.all()
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
@@ -26,6 +29,9 @@ class PostList(APIView):
     def post(self, request, format=None):
         print('PostList  --->> inside post ')
         print(request.data)
+        # if request.user.is_anonymous:
+        #     return Response({'error': 'Authentication required'}, status=401)
+        
         serializer = PostSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(author=request.user)

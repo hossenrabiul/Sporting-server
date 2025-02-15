@@ -14,3 +14,4 @@ class Products(models.Model):
     rating = models.TextField(choices=STAR_CHOICES)
     descirption = models.TextField()
     price = models.IntegerField()
+    

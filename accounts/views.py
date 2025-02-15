@@ -1,7 +1,5 @@
-
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from rest_framework import viewsets
-from . import models
 from . import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -11,10 +9,9 @@ from django.utils.encoding import force_bytes
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.authtoken.models import Token
-# for sending email
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
-from django.shortcuts import redirect
+
 
 class UserRegistrationApiView(APIView):
     serializer_class = serializers.RegistrationSerializer
@@ -40,18 +37,24 @@ class UserRegistrationApiView(APIView):
         return Response(serializer.errors)
 
 
-def activate(request, uid64, token):
+def activate(request,uid64,token):
+    print("hello word")
+
     try:
         uid = urlsafe_base64_decode(uid64).decode()
+        print("uid", uid)
         user = User._default_manager.get(pk=uid)
-    except(User.DoesNotExist):
-        user = None 
-    
-    if user is not None and default_token_generator.check_token(user, token):
-        user.is_active = True
+        print("use", user)
+    except (User.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user,token):
+        user.is_active = True 
         user.save()
+     
         return redirect('login')
     else:
+        
         return redirect('register')
     
 

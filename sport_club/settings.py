@@ -30,7 +30,8 @@ SECRET_KEY = 'django-insecure-4x9%3ltp-9-!%^r+=j!k6o8%kb&5i0hj2%c9bd8mkhygiknie5
 DEBUG = True
 
 CORS_ALLOW_ALL_ORIGINS = True
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["127.0.0.1", ".vercel.app"]
+
 CSRF_TRUSTED_ORIGINS = ['https://sporting-server-o0yi.onrender.com','https://*.127.0.0.1']
 
 # Application definition
@@ -53,10 +54,18 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
 ]
-
 REST_FRAMEWORK = {
+    # 'DEFAULT_AUTHENTICATION_CLASSES': [
+    #     'rest_framework.authentication.TokenAuthentication',
+    # ],
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.IsAuthenticated',
+    # ],
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
+
+# REST_FRAMEWORK = {
+# }
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -88,16 +97,29 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'sport_club.wsgi.application'
+WSGI_APPLICATION = 'sport_club.wsgi.app'
 
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres.bhmflbursrhkvaslepje',
+        'PASSWORD': 'zaUxoFYNSBTbmQ7L',
+        'HOST': 'aws-0-ap-southeast-1.pooler.supabase.com',
+        'PORT': '6543'
     }
 }
 
@@ -138,6 +160,11 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 

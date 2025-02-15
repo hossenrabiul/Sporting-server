@@ -7,3 +7,17 @@ Store Password = devel679c32d3d4684@ssl
 
 
 https://github.com/ratin17/SSLCommerz-in-Django
+
+
+
+
+
+https://ecommerce-backend-8o3w.onrender.com/	
+https://github.com/mohammadarmanhossen/Ecommerce-Backend	
+username:arman,
+password:Arman404@	
+https://mellow-gelato-74ff91.netlify.app/home.html	
+https://github.com/mohammadarmanhossen/Ecommerce-Frontend
+
+https://github.com/DurjoyKumar177/NetBill_Manager
+https://github.com/DurjoyKumar177/NetBill_Manager-Frontend

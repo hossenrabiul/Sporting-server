@@ -1,16 +1,13 @@
 {
-  "builds": [
-    {
-      "src": "requirements.txt",
-      "use": "@vercel/python"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "sport_club.wsgi.app"
-    }
-  ]
+    "builds": [{
+      "src": "sport_club/wsgi.py",
+      "use": "@vercel/python",
+      "config": { "maxLambdaSize": "15mb", "runtime": "python3.11.3" }
+    }],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "sport_club/wsgi.py"
+      }
+    ]
 }
-
-

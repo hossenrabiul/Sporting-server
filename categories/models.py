@@ -9,10 +9,3 @@ class Category(models.Model):
     def __str__(self):
         return f"name : {self.name}"
 
-class Brand(models.Model):
-    name = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=100, unique=True, null=True, blank=True)
-
-    def __str__(self):
-        return f"name : {self.name}"
-

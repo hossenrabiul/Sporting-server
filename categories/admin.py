@@ -7,9 +7,3 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'slug']
 
 admin.site.register(models.Category, CategoryAdmin)
-
-class brandAdmin(admin.ModelAdmin):
-    prepopulated_fields = {'slug' : ('name',)}
-    list_display = ['name', 'slug']
-
-admin.site.register(models.Brand, brandAdmin)

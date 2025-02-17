@@ -100,10 +100,12 @@ class UserLoginApiView(APIView):
 
         return Response(serializer.errors, status=400)
 
-
 class UserLogoutView(APIView):
     def get(self, request):
-        request.user.auth_token.delete()
-        logout(request)
-        return redirect('login')
-        
+        if request.user.is_authenticated:
+            request.user.auth_token.delete()
+            logout(request)
+            return Response({"message": "Successfully logged out"}, status=200)
+        else:
+            return Response({"error": "User is not authenticated"}, status=400)
+

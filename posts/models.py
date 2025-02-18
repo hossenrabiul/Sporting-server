@@ -10,7 +10,7 @@ class Products(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     storkQuantity = models.IntegerField(default=1)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    image = models.URLField(max_length=200, blank=True, null=True)
+    image = models.URLField(max_length=201, blank=True, null=True)
     rating = models.TextField(choices=STAR_CHOICES)
     descirption = models.TextField()
     price = models.IntegerField()

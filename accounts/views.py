@@ -12,7 +12,6 @@ from rest_framework.authtoken.models import Token
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 
-
 class UserRegistrationApiView(APIView):
     serializer_class = serializers.RegistrationSerializer
     
@@ -26,7 +25,7 @@ class UserRegistrationApiView(APIView):
             print("token ", token)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             print("uid ", uid)
-            confirm_link = f"https://sporting-server-pmrvwpqq4-rabiul-hosens-projects.vercel.app/accounts/active/{uid}/{token}/"
+            confirm_link = f"https://sporting-server-xi.vercel.app/accounts/active/{uid}/{token}/"
             email_subject = "Confirm Your Email"
             email_body = render_to_string('comfirm_email.html', {'confirm_link' : confirm_link})
             

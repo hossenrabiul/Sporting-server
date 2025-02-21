@@ -57,24 +57,24 @@ def activate(request,uid64,token):
         return redirect('register')
     
 
-# class UserLoginApiView(APIView):
-    def post(self, request):
-        serializer = serializers.UserLoginSerializer(data = self.request.data)
-        if serializer.is_valid():
-            username = serializer.validated_data['username']
-            password = serializer.validated_data['password']
+# # class UserLoginApiView(APIView):
+#     def post(self, request):
+#         serializer = serializers.UserLoginSerializer(data = self.request.data)
+#         if serializer.is_valid():
+#             username = serializer.validated_data['username']
+#             password = serializer.validated_data['password']
 
-            user = authenticate(username= username, password=password)
+#             user = authenticate(username= username, password=password)
             
-            if user:
-                token, _ = Token.objects.get_or_create(user=user)
-                print(token)
-                print(_)
-                login(request, user)
-                return Response({'token' : token.key, 'user_id' : user.id})
-            else:
-                return Response({'error' : "Invalid Credential"})
-        return Response(serializer.errors)
+#             if user:
+#                 token, _ = Token.objects.get_or_create(user=user)
+#                 print(token)
+#                 print(_)
+#                 login(request, user)
+#                 return Response({'token' : token.key, 'user_id' : user.id})
+#             else:
+#                 return Response({'error' : "Invalid Credential"})
+#         return Response(serializer.errors)
 
 class UserLoginApiView(APIView):
     def post(self, request):
@@ -87,17 +87,21 @@ class UserLoginApiView(APIView):
 
             if user:
                 token, _ = Token.objects.get_or_create(user=user)
+                print("token"  ,token, "req"  ,request)
                 login(request, user)
                 
                 return Response({
                     'token': token.key,
                     'user_id': user.id,
-                    'is_superuser': user.is_superuser  # ✅ Include admin status
+                    'is_superuser': user.is_superuser, # ✅ Include admin status
+                    'username' : username,
+                    'password' : password
                 })
             else:
                 return Response({'error': "Invalid Credential"}, status=400)
 
         return Response(serializer.errors, status=400)
+
 
 class UserLogoutView(APIView):
     def get(self, request):

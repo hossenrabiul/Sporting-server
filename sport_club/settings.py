@@ -184,9 +184,9 @@ EMAIL_USE_SSL = False
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-cloudinary.config( 
-    cloud_name = "ddnzkk3kr", 
-    api_key = "948376443515977", 
-    api_secret = "TYW49A4BOI7XhXhXaLCQEuwlvxE", # Click 'View API Keys' above to copy your API secret
-    secure=True
-)
+# cloudinary.config( 
+#     cloud_name = "ddnzkk3kr", 
+#     api_key = "948376443515977", 
+#     api_secret = "TYW49A4BOI7XhXhXaLCQEuwlvxE", # Click 'View API Keys' above to copy your API secret
+#     secure=True
+# )

@@ -4,9 +4,9 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-
+from django.shortcuts import get_object_or_404
 from .permissions import IsAuthorOrReadOnly
-
+from categories.models import Category
 from rest_framework import generics
 
 
@@ -17,14 +17,37 @@ class PostList(APIView):
 
     # permission_classes = [IsAuthorOrReadOnly]
     
-    def get(self, request, format=None):
+    def get(self, request, slug = None):
+        print(slug)
         print('PostList  --->> inside get ')
-        # if request.user.is_anonymous:
-        #     return Response({'error': 'Authentication required'}, status=401)
+        product = Products.objects.all()
+        if slug:
+            try:
+                slug = Category.objects.get(slug = slug)
+                product = Products.objects.filter(category = slug)
+            except:
+                return Response("brand does not exit")
+
+        data = PostSerializer(product, many = True).data
+        return Response(data)
+            # posts = Products.objects.all()
+            # serializer = PostSerializer(posts, many=True)
+            # return Response(serializer.data)
         
-        posts = Products.objects.all()
-        serializer = PostSerializer(posts, many=True)
-        return Response(serializer.data)
+        # def get_queryset(self):
+        #     category_slug = self.kwargs.get('slug')  # Get category slug from URL
+        #     category = get_object_or_404(Category, slug=category_slug)  # Get category object
+        #     return Products.objects.filter(category=category)
+        
+        # if pk is None:
+        #     posts = Products.objects.all()
+        #     serializer = PostSerializer(posts, many=True)
+        #     return Response(serializer.data)
+        # else:
+        #     posts = get_object_or_404(Products, pk = pk)
+        #     serializer = PostSerializer(posts)
+        #     return Response(serializer.data)
+            
 
     def post(self, request, format=None):
         print('PostList  --->> inside post ')
@@ -38,8 +61,16 @@ class PostList(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+
+class ProductsByCategory(generics.ListAPIView):
+    serializer_class = PostSerializer  # Use PostSerializer
+
+    def get_queryset(self):
+        category_slug = self.kwargs.get('slug')  # Get category slug from URL
+        category = get_object_or_404(Category, slug=category_slug)  # Get category object
+        return Products.objects.filter(category=category)
     
-    
+
 class PostDetail(APIView):
     """
     Retrieve, update or delete a post instance.

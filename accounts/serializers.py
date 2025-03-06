@@ -23,6 +23,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         
         if password != password2:
             raise serializers.ValidationError({'error' : "Password Doesn't Mactched"})
+        
         if User.objects.filter(email=email).exists():
             raise serializers.ValidationError({'error' : "Email Already exists"})
         

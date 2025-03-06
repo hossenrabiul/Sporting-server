@@ -33,6 +33,7 @@ class UserRegistrationApiView(APIView):
             email.attach_alternative(email_body, "text/html")
             email.send()
             return Response("Check your mail for confirmation")
+        
         return Response(serializer.errors)
 
 

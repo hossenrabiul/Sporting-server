@@ -1,7 +1,9 @@
 from django.shortcuts import render,redirect
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from . import serializers
 from rest_framework.views import APIView
+from rest_framework.generics import RetrieveAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -77,6 +79,7 @@ def activate(request,uid64,token):
 #                 return Response({'error' : "Invalid Credential"})
 #         return Response(serializer.errors)
 
+
 class UserLoginApiView(APIView):
     def post(self, request):
         serializer = serializers.UserLoginSerializer(data=request.data)
@@ -104,6 +107,14 @@ class UserLoginApiView(APIView):
         return Response(serializer.errors, status=400)
 
 
+class userProfileUpdateView(RetrieveAPIView):
+    serializer_class = serializers.userProfileUpdateSerializer
+    # permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+
 class UserLogoutView(APIView):
     def get(self, request):
         if request.user.is_authenticated:
@@ -112,4 +123,14 @@ class UserLogoutView(APIView):
             return Response({"message": "Successfully logged out"}, status=200)
         else:
             return Response({"error": "User is not authenticated"}, status=400)
+    
+
+    
+class userProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = serializers.userSerializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
 

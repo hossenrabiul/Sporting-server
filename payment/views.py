@@ -163,4 +163,4 @@ class PaymentFailedAPI(APIView):
 
 class PaymentCancelAPI(APIView):
     def post(self, request):
-        return Response({"message": "Payment cancelled", "data": request.data})
+        return Response({"message": "Payment canceled", "data": request.data})

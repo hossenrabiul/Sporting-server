@@ -50,3 +50,28 @@ class userSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'first_name', 'last_name']
+
+
+
+class ContactSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=255)
+    email = serializers.EmailField()
+    phone = serializers.CharField(max_length=15)
+    subject = serializers.CharField(max_length=255)
+    message = serializers.CharField()
+
+    def send_email(self):
+        from django.core.mail import send_mail
+        # Get the validated data
+        subject = self.validated_data['subject']
+        message = self.validated_data['message']
+        sender_email = self.validated_data['email']
+        recipient_email = "aorr@gmail.com"
+
+        send_mail(
+            subject,
+            message,
+            sender_email,
+            [recipient_email],
+            fail_silently=False,
+        )

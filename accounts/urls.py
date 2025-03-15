@@ -12,4 +12,5 @@ urlpatterns = [
     path('active/<uid64>/<token>/', views.activate, name = 'activate'),
     path('update/', views.userProfileUpdateView.as_view(), name = 'user-profile'),
     path('profile/', views.userProfileView.as_view(), name = 'profile'),
+    path('contact/', views.ContactView.as_view(), name = 'contact'),
 ]

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from . import models
 from django.contrib.auth.models import User
+from django.core.mail import send_mail
 # class PatientSerializer(serializers.ModelSerializer):
 #     user = serializers.StringRelatedField(many=False)
 #     class Meta:
@@ -61,12 +62,12 @@ class ContactSerializer(serializers.Serializer):
     message = serializers.CharField()
 
     def send_email(self):
-        from django.core.mail import send_mail
+       
         # Get the validated data
         subject = self.validated_data['subject']
         message = self.validated_data['message']
         sender_email = self.validated_data['email']
-        recipient_email = "aorr@gmail.com"
+        recipient_email = sender_email
 
         send_mail(
             subject,

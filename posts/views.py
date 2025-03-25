@@ -8,41 +8,55 @@ from django.shortcuts import get_object_or_404
 from .permissions import IsAuthorOrReadOnly
 from categories.models import Category
 from rest_framework import generics
+from rest_framework.pagination import PageNumberPagination
 
-
+class CustomPagination(PageNumberPagination):
+    page_size = 4
     
 class PostList(APIView):
-    # queryset = Post.objects.all()
-    # serializer_class = PostSerializer
-
     # permission_classes = [IsAuthorOrReadOnly]
-    
+    pagination_class = CustomPagination
+
     def get(self, request, slug = None):
         print(slug)
         print('PostList  --->> inside get ')
         product = Products.objects.all()
+    
         if slug:
             try:
                 slug = Category.objects.get(slug = slug)
                 product = Products.objects.filter(category = slug)
             except:
                 return Response("brand does not exit")
+            
+        else:
+            query = request.GET.get('search', '')
+            if query:
+                print(query)
+                query_product = Products.objects.filter(name__icontains=query)
+                if query_product.exists():
+                    product = query_product
+                else:
+                    return Response({'Not found any product'}, status=status.HTTP_404_NOT_FOUND)
 
-        data = PostSerializer(product, many = True).data
-        return Response(data)
-        
+        paginator = self.pagination_class()
+        paginator_queryset = paginator.paginate_queryset(product, request)
+
+        data = PostSerializer(paginator_queryset, many = True).data
+        return paginator.get_paginated_response(data)
+    
     def post(self, request, format=None):
         print('PostList  --->> inside post ')
-        print(request.data)
-        # if request.user.is_anonymous:
+        # print(request.data)
+        # if not request.user.is_authenticated:
         #     return Response({'error': 'Authentication required'}, status=401)
         
         serializer = PostSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(author=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
 
 
 class newPostList(APIView):

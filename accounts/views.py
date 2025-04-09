@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from rest_framework import viewsets, status
 from . import serializers
 from rest_framework.views import APIView
-from rest_framework.generics import RetrieveAPIView
+from rest_framework.generics import RetrieveAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.contrib.auth.tokens import default_token_generator
@@ -107,9 +107,10 @@ class UserLoginApiView(APIView):
         return Response(serializer.errors, status=400)
 
 
-class userProfileUpdateView(RetrieveAPIView):
+class userProfileUpdateView(RetrieveUpdateAPIView):
+    querysetj = User.objects.all()
     serializer_class = serializers.userProfileUpdateSerializer
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get_object(self):
         return self.request.user

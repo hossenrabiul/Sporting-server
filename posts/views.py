@@ -60,9 +60,7 @@ class PostList(APIView):
 
 
 class newPostList(APIView):
-    # queryset = Post.objects.all()
-    # serializer_class = PostSerializer
-
+  
     # permission_classes = [IsAuthorOrReadOnly]
     
     def get(self, request, slug = None):

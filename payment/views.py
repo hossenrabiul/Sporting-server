@@ -148,7 +148,7 @@ class PaymentAPI(APIView):
             response = sslcz.createSession(post_body)
 
             if 'GatewayPageURL' not in response:
-                return Response({"error": "Payment session creation failed", "details": response}, status=400)
+                return Response({"errorr": "Payment session creation failed", "details": response}, status=400)
 
             return Response({'payment_url': response['GatewayPageURL']})
 

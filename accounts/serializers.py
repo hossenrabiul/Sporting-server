@@ -13,7 +13,20 @@ class RegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name', 'email', 'password', 'confirm_password']
+        extra_kwargs = {
+            'password' : {'write_only' : True},
+            'email' : {'required' : True}
+        }
+
+    def validate(self, attrs):
+        if attrs['password'] != attrs['confirm_password']:
+            raise serializers.ValidationError("Passwords do not match.")
+        
+        if User.objects.filter(email = attrs['email']).exists():
+            raise serializers.ValidationError("Email already exists.")
+        return attrs
     
+
     def save(self):
         username = self.validated_data['username']
         first_name = self.validated_data['first_name']
@@ -22,11 +35,11 @@ class RegistrationSerializer(serializers.ModelSerializer):
         password = self.validated_data['password']
         password2 = self.validated_data['confirm_password']
         
-        if password != password2:
-            raise serializers.ValidationError({'error' : "Password Doesn't Mactched"})
+        # if password != password2:
+        #     raise serializers.ValidationError({'error' : "Password Doesn't Mactched"})
         
-        if User.objects.filter(email=email).exists():
-            raise serializers.ValidationError({'error' : "Email Already exists"})
+        # if User.objects.filter(email=email).exists():
+        #     raise serializers.ValidationError({'error' : "Email Already exists"})
         
         account = User(username = username, email=email, first_name = first_name, last_name = last_name)
         print(account)

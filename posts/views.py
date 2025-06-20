@@ -10,12 +10,13 @@ from categories.models import Category
 from rest_framework import generics
 from rest_framework.pagination import PageNumberPagination
 
+
 class CustomPagination(PageNumberPagination):
-    page_size = 4
+    page_size = 10
     
 class PostList(APIView):
     # permission_classes = [IsAuthorOrReadOnly]
-    pagination_class = CustomPagination
+    # pagination_class = CustomPagination
 
     def get(self, request, slug = None):
         print(slug)
@@ -39,11 +40,13 @@ class PostList(APIView):
                 else:
                     return Response({'Not found any product'}, status=status.HTTP_404_NOT_FOUND)
 
-        paginator = self.pagination_class()
-        paginator_queryset = paginator.paginate_queryset(product, request)
+        data = PostSerializer(product, many=True).data
+        return Response(data)
+        # paginator = self.pagination_class()
+        # paginator_queryset = paginator.paginate_queryset(product, request)
 
-        data = PostSerializer(paginator_queryset, many = True).data
-        return paginator.get_paginated_response(data)
+        # data = PostSerializer(paginator_queryset, many = True).data
+        # return paginator.get_paginated_response(data)
     
     def post(self, request, format=None):
         print('PostList  --->> inside post ')
@@ -53,7 +56,7 @@ class PostList(APIView):
         
         serializer = PostSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(author=request.user)
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

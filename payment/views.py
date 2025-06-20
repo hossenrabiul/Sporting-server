@@ -48,7 +48,8 @@ class paymenView(APIView):
     def post(self, request):
         # Extract data from the request (if needed)
         user_email = request.user.email if request.user.is_authenticated else "guest@example.com"
-
+        tk = request.data.get('amount')
+        currency = request.data.get('currency')
         # SSLCommerz settings
         settings = {
             'store_id': 'devel679c32d3d4684',
@@ -59,7 +60,7 @@ class paymenView(APIView):
 
         # Prepare the payment request payload
         post_body = {
-            'total_amount': 100.0,  # Replace with dynamic value if needed
+            'total_amount': tk , # Replace with dynamic value if needed
             'currency': "BDT",
             'tran_id': "12345",  # Replace with a unique transaction ID
             'success_url': "http://127.0.0.1:8000/payment/success/",
@@ -108,6 +109,9 @@ class PaymentAPI(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
+        tk = request.data.get('amount')
+        currency = request.data.get('currency')
+
         try:
             tran_id = str(uuid.uuid4())[:10] 
 
@@ -120,7 +124,7 @@ class PaymentAPI(APIView):
             sslcz = SSLCOMMERZ(settings)
 
             post_body = {
-                'total_amount': 5000,
+                'total_amount': tk,
                 'currency': "BDT",
                 'tran_id': tran_id,
                 'success_url': "https://sporting-server-xi.vercel.app/payment/success/",

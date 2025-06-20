@@ -59,18 +59,24 @@ INSTALLED_APPS = [
     'corsheaders',
 ]
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    ],
+  
     'DEFAULT_PERMISSION_CLASSES': [
         # 'rest_framework.permissions.IsAuthenticated',   means unauthenticated user can access nothing
     ],
     
+      # 'DEFAULT_AUTHENTICATION_CLASSES': [
+    #     'rest_framework.authentication.TokenAuthentication',
+    #     'rest_framework.authentication.SessionAuthentication',
+    # ],
+
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 
      'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-     'PAGE_SIZE' : 2
+     'PAGE_SIZE' : 10
 }
 
 # REST_FRAMEWORK = {
@@ -195,3 +201,5 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 #     api_secret = "TYW49A4BOI7XhXhXaLCQEuwlvxE", # Click 'View API Keys' above to copy your API secret
 #     secure=True
 # )
+
+CORS_ALLOW_ALL_ORIGINS = True
